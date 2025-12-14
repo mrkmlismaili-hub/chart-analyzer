@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chart Analyzer</title>
+<style>
+body { font-family: Arial; text-align: center; padding: 50px; }
+#result { margin-top: 20px; font-size: 20px; font-weight: bold; white-space: pre-line; }
+</style>
+</head>
+<body>
+
+<h1>Chart Analyzer</h1>
+<input type="file" id="chartInput" accept="image/*" multiple>
+<button onclick="uploadCharts()">Analyze Charts</button>
+<div id="result"></div>
+
+<script>
+async function uploadCharts() {
+    const fileInput = document.getElementById('chartInput');
+    if (!fileInput.files.length) { alert("Select chart images"); return; }
+
+    const formData = new FormData();
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append("charts", fileInput.files[i]);
+    }
+
+    const response = await fetch("/analyze", { method: "POST", body: formData });
+    const data = await response.json();
+
+    let resultText = "";
+    data.decisions.forEach((item, index) => {
+        resultText += `Chart ${index + 1}: ${item}\n\n`;
+    });
+
+    document.getElementById("result").innerText = resultText;
+}
+</script>
+
+</body>
+</html>
